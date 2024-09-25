@@ -188,13 +188,11 @@ fun DragAndDropLazyColumnScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.suityan),
-                    contentDescription = "Thumbnail",
-                    contentScale = ContentScale.Crop,
+                Box(
                     modifier = Modifier
                         .size(200.dp)
                         .padding(30.dp)
+                        .background(Color.Cyan)
                 )
             }
         }
@@ -286,9 +284,9 @@ fun PreviewDragAndDropListCell() {
     DragAndDropLazyColumnTheme {
         DragAndDropListCell(
             music = Music(
-                R.drawable.soiree,
-                "ソワレ",
-                "星街すいせい"
+                R.drawable.onepiece01_luffy,
+                "ルフィー",
+                "OnePiece"
             )
         )
     }

@@ -9,69 +9,69 @@ data class Music(
         fun samples(): List<Music> {
             return listOf(
                 Music(
-                    R.drawable.comet,
-                    "comet",
-                    "星街すいせい"
+                    R.drawable.onepiece01_luffy,
+                    "ルフィ",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.tenkyu,
-                    "天球、彗星は夜を跨いで",
-                    "星街すいせい"
+                    R.drawable.onepiece02_zoro_bandana,
+                    "ゾロ",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.next_color_planet,
-                    "NEXT COLOR PLANET",
-                    "星街すいせい"
+                    R.drawable.onepiece03_nami,
+                    "ナミ",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.ghost,
-                    "GHOST",
-                    "星街すいせい"
+                    R.drawable.onepiece04_usopp_sogeking,
+                    "ウソップ",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.still_still_stellar,
-                    "Still Still Stellar",
-                    "星街すいせい"
+                    R.drawable.onepiece05_sanji,
+                    "サンジ",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.template,
-                    "TEMPLATE",
-                    "星街すいせい"
+                    R.drawable.onepiece06_chopper,
+                    "チョッパー",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.wicked,
-                    "Wicked",
-                    "星街すいせい"
+                    R.drawable.onepiece07_robin,
+                    "ロビン",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.spector,
-                    "Specter",
-                    "星街すいせい"
+                    R.drawable.onepiece08_franky,
+                    "フランキー",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.soiree,
-                    "ソワレ",
-                    "星街すいせい"
+                    R.drawable.onepiece09_brook,
+                    "ブルック",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.housousitu,
-                    "放送室",
-                    "星街すいせい"
+                    R.drawable.onepiece10_jinbe,
+                    "ジンベエ",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.pioneer,
-                    "先駆者",
-                    "星街すいせい"
+                    R.drawable.onepiece11_arlong,
+                    "アーロン",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.maintenance,
-                    "スイちゃんのメンテナンスソング",
-                    "星街すいせい"
+                    R.drawable.onepiece12_buggy,
+                    "バギー",
+                    "OnePiece"
                 ),
                 Music(
-                    R.drawable.bibideba,
-                    "ビビデバ",
-                    "星街すいせい"
+                    R.drawable.onepiece13_crocodile,
+                    "クロコダイル",
+                    "OnePiece"
                 ),
             )
         }
