@@ -3,11 +3,15 @@ package com.example.draganddroplazycolumn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -17,15 +21,18 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.draganddroplazycolumn.ui.theme.DragAndDropLazyColumnTheme
+import kotlinx.coroutines.channels.Channel
 
 @Composable
 fun DragAndDropLazyColumnScreen(
@@ -58,11 +66,24 @@ fun DragAndDropLazyColumnScreen(
     }
 
     val onMove = { fromIndex: Int, toIndex: Int ->
-        rememberList = rememberList.toMutableList().apply { add(toIndex, removeAt(fromIndex)) }
+        if (fromIndex >= 3 && toIndex >= 3) {
+            rememberList =
+                rememberList.toMutableList().apply { add(toIndex - 3, removeAt(fromIndex - 3)) }
+        }
+    }
+
+    val scrollChannel = Channel<Float>()
+
+    LaunchedEffect(lazyListState) {
+        while (true) {
+            val diff = scrollChannel.receive()
+            lazyListState.scrollBy(diff)
+        }
     }
 
     LazyColumn(
         modifier = Modifier
+            .padding(16.dp)
             .pointerInput(
                 key1 = lazyListState
             ) {
@@ -73,8 +94,7 @@ fun DragAndDropLazyColumnScreen(
                             .firstOrNull { item ->
                                 // ドラッグ位置からドラッグされるアイテムを探す
                                 offset.y.toInt() in item.offset..(item.offset + item.size)
-                            }
-                            ?.also { draggedItem ->
+                            }?.also { draggedItem ->
                                 // dragされているアイテムそのものを保存しておく
                                 draggingItem = draggedItem
                                 // dragされているアイテムのインデックスを保存しておく
@@ -83,6 +103,7 @@ fun DragAndDropLazyColumnScreen(
                     },
                     onDrag = { change, dragAmount ->
                         change.consume()
+                        if ((draggingItemIndex ?: 0) < 3) return@detectDragGesturesAfterLongPress
                         delta += dragAmount.y
 
                         val currentDraggingItemIndex =
@@ -107,6 +128,22 @@ fun DragAndDropLazyColumnScreen(
                             draggingItemIndex = targetIndex
                             draggingItem = targetItem
                             delta += currentDraggingItem.offset - targetItem.offset
+                        } else {
+                            val startOffsetToTop =
+                                startOffset - lazyListState.layoutInfo.viewportStartOffset
+                            val endOffsetToBottom =
+                                endOffset - lazyListState.layoutInfo.viewportEndOffset
+                            val scroll =
+                                when {
+                                    startOffsetToTop < 0 -> startOffsetToTop.coerceAtMost(0f)
+                                    endOffsetToBottom > 0 -> endOffsetToBottom.coerceAtLeast(0f)
+                                    else -> 0f
+                                }
+                            val canScrollDown = currentDraggingItemIndex - 3 != rememberList.size - 1 && endOffsetToBottom > 0
+                            val canScrollUp = currentDraggingItemIndex - 3 != 0 && startOffsetToTop < 0
+                            if (scroll != 0f && (canScrollUp || canScrollDown)) {
+                                scrollChannel.trySend(scroll)
+                            }
                         }
                     },
                     onDragEnd = {
@@ -127,21 +164,65 @@ fun DragAndDropLazyColumnScreen(
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item {
+            Row {
+                Text(
+                    text = "キャンセル",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "保存",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 18.sp
+                    )
+                )
+            }
+        }
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.suityan),
+                    contentDescription = "Thumbnail",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(200.dp)
+                        .padding(30.dp)
+                )
+            }
+        }
+        item {
+            Box {
+                Column {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(30.dp)
+                            .background(Color.White)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .background(Color.White)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+        }
         itemsIndexed(
             items = rememberList,
             contentType = { _, item -> item }
         ) { index, item ->
-            val modifier = if (draggingItemIndex == index) {
-                Modifier
-                    .zIndex(1f)
-                    .graphicsLayer {
-                        translationY = delta
-                    }
-            } else {
-                Modifier
-            }
             DragAndDropListCell(
-                modifier = modifier,
                 music = item,
             )
         }
