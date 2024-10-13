@@ -284,8 +284,8 @@ fun PreviewDragAndDropListCell() {
     DragAndDropLazyColumnTheme {
         DragAndDropListCell(
             music = Music(
-                R.drawable.onepiece01_luffy,
-                "ルフィー",
+                R.drawable.sandwich_pj,
+                "サンドウィッチ",
                 "OnePiece"
             )
         )
